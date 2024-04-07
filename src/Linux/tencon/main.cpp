@@ -35,33 +35,34 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	cv::cvtColor(frame, frame_gray, CV_BGR2GRAY);
+	cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
 
 	cv::Rect g_rt = mGallo.process(frame_gray, 20);
-	cv::rectangle(frame, g_rt, cvScalar(0, 255, 0), 2);
-
+        std::cout << "Gallo detection: x=" << g_rt.x << ", y=" << g_rt.y << ", width=" << g_rt.width << ", height=" << g_rt.height << std::endl;
+	
 	cv::Rect s_rt = mSoros.process(frame_gray, 20);
-	cv::rectangle(frame, s_rt, cvScalar(255,0,0), 2);
+	std::cout << "Soros detection: x=" << s_rt.x << ", y=" << s_rt.y << ", width=" << s_rt.width << ", height=" << s_rt.height << std::endl;
 
 	std::vector<iy::YunCandidate> list_barcode = mYun.process(frame_gray);
 	if (!list_barcode.empty())
 	{
-		for (std::vector<iy::YunCandidate>::iterator it = list_barcode.begin(); it < list_barcode.end(); it++)
+		for (std::vector<iy::YunCandidate>::iterator it = list_barcode.begin(); it != list_barcode.end(); ++it)
 		{
 			if (it->isBarcode)
 			{
 				cv::Rect y_rt = it->roi;
-				cv::rectangle(frame, y_rt, cvScalar(0, 255, 255), 2);
+				std::cout << "Yun barcode detection: x=" << y_rt.x << ", y=" << y_rt.y << ", width=" << y_rt.width << ", height=" << y_rt.height << std::endl;
 			}
 		}
 
 		list_barcode.clear();
 	}
 
-	cv::imshow("frame", frame);
-	cv::waitKey(0);
+        // Commenting out imshow and waitKey since we don't need to display the image anymore.
+        //cv::imshow("frame", frame);
+        //cv::waitKey(0);
 
-	cv::destroyAllWindows();
+	//cv::destroyAllWindows();
 
 	return 0;
 }
